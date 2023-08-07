@@ -9,23 +9,24 @@ import PengeluaranRoute from './routes/PengeluaranRoute.js'
 import db  from './config/Database.js'
 import sequelizeStore from 'connect-session-sequelize'
 import {errorHandling} from './middleware/ErrorHandling.js'
-// import Pengeluaran from './models/PengeluaranModels.js'
-// import Users from './models/UserModels.js'
+
 
 dotenv.config()
 
 const app = express()
 
-// create table session
+// table session
 const sessionSrore = sequelizeStore(session.Store)
 const store = new sessionSrore({
     db: db,
+    checkExpirationInterval: 15 * 60 * 1000, // clean up expired sessions every 15 M
+    expiration: 3600 * 24 // expired session 1 day
 })
 
 try {
     db.authenticate()
     console.log('Success Connnect to Database')
-    // await Pengeluaran.sync()
+    // await ModelsName.sync() //import dulu models nya
 } catch (error) {
     console.error(error)
     
