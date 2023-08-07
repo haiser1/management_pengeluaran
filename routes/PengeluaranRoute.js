@@ -1,17 +1,21 @@
 import express from 'express'
-import { checkSession } from '../middleware/AuthUsers.js'
+import { checkSession } from '../middleware/CheckSession.js'
 import { addPengeluaran,
+        deletePengeluaran,
         getPengeluaran,
-        getPengeluaranOneWeekAgo,
+        getPengeluaranDayAgo,
+        getSumPengeluaranDayAgo,
         updatePengeluaran, 
 } from '../controllers/Pengeluaran.js'
 
 const router = express.Router()
 
-router.post('/pengeluaran', checkSession, addPengeluaran)
-router.get('/pengeluaran', checkSession, getPengeluaran)
-router.get('/pengeluaran/oneWeek', checkSession, getPengeluaranOneWeekAgo)
-router.patch('/pengeluaran/:id', checkSession, updatePengeluaran)
+router.post('/users/pengeluaran', checkSession, addPengeluaran)
+router.get('/users/pengeluaran', checkSession, getPengeluaran)
+router.get('/users/pengeluaran/:day', checkSession, getPengeluaranDayAgo)
+router.get('/users/total-pengeluaran/:day', checkSession, getSumPengeluaranDayAgo)
+router.patch('/users/pengeluaran/:id', checkSession, updatePengeluaran)
+router.delete('/users/pengeluaran/:id', checkSession, deletePengeluaran)
 
 
 export default router

@@ -35,6 +35,18 @@ const Users = db.define('users', {
             notEmpty: true
         }
     },
+    otpCode: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    otpExpiration: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+    emailVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    }
 },{
     freezeTableName: true
 })
