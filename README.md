@@ -1,6 +1,7 @@
 # Management Pengeluaran
 
-Sebuah API sederhana untuk mencatat pengeluaran dan barang apa saja yang anda beli dan bisa melihat jumlah pengeluaran anda.
+Saya menggunakan NodeJs v20.5.0, dan npm v9.8.0
+Sebuah API sederhana untuk mencatat pengeluaran anda dan jumlah pengeluaran anda.
 
 ## Cara Install
 
