@@ -1,6 +1,6 @@
 # Management Pengeluaran
 
-Saya menggunakan NodeJs v20.5.0, dan npm v9.8.0
+Saya menggunakan NodeJs v20.5.0, dan npm v9.8.0  
 Sebuah API sederhana untuk mencatat pengeluaran anda dan jumlah pengeluaran anda.
 
 ## Cara Install
