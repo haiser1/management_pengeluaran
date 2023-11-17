@@ -7,15 +7,15 @@ import {
     newPassword,
     me,
 } from "../controllers/Users.js"
-import { checkSession } from "../middleware/CheckSession.js"
+import { checkToken } from "../middleware/CheckToken.js"
 const router = express.Router()
 
 router.post('/users/register', register)
-router.get('/users', checkSession, me)
-router.patch('/users/:id', checkSession, updateName)
-router.put('/users/change-password/:id', checkSession, changePassword)
-router.put('/users/forget-password', checkSession, forgetPassword)
-router.put('/users/new-password', checkSession, newPassword)
+router.get('/users', checkToken, me)
+router.patch('/users', checkToken, updateName)
+router.put('/users/change-password/', checkToken, changePassword)
+router.post('/users/forget-password', checkToken, forgetPassword)
+router.put('/users/new-password', checkToken, newPassword)
 
 
 export default router

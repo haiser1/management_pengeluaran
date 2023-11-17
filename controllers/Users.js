@@ -13,7 +13,7 @@ export const register = async (req,res,next) => {
     if(password !== confPassword) return res.status(400).json({message: 'Password and Confirm Password not Same'})
 
     const hashPassword = await argon2.hash(password)
-    const otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
+    const otpExpiration = new Date(Date.now() + 3 * 60 * 1000)
     const emailFind = await Users.findOne({
         where: {
             email: email
@@ -44,7 +44,7 @@ export const me = async (req, res, next) => {
         const user = await Users.findOne({
             attributes: ['uuid', 'name', 'email'],
             where: {
-                uuid: req.session.userId
+                id: req.userId
             }
         })
     
@@ -63,7 +63,7 @@ export const updateName = async (req, res, next) => {
     const {name} = req.body
     const user = await Users.findOne({
         where: {
-            uuid: req.params.id
+            id: req.userId
         }
     })
 
@@ -73,7 +73,7 @@ export const updateName = async (req, res, next) => {
         name: name,
     },{
         where: {
-            uuid: req.params.id
+            id: req.userId
         }
     })
 
@@ -92,9 +92,11 @@ export const changePassword = async (req, res, next) => {
     try {
         const {password, newPassword, confPassword} = req.body
 
+        if(!newPassword || !confPassword) return res.status(400).json({message: 'New Password or Confpassword cannot be empty'})
+
         const user = await Users.findOne({
             where: {
-                uuid: req.params.id
+                id: req.userId
             }
         })
         if(!user) return res.status(404).json({message: 'User Not Found'})
@@ -102,8 +104,6 @@ export const changePassword = async (req, res, next) => {
         const match = await argon2.verify(user.password, password)
         
         if(!match) return res.status(400).json({message: 'Password Wrong!'})
-
-        if(!newPassword || !confPassword) return res.status(400).json({message: 'New Password or Confpassword cannot be empty'})
         
         if(newPassword !== confPassword) return res.status(400).json({message: 'Password and Confirm Password not Same'})       
         
@@ -112,7 +112,7 @@ export const changePassword = async (req, res, next) => {
             password: hashPassword
         },{
             where: {
-                uuid: req.params.id
+                id: req.userId
             }
         })
 
@@ -126,13 +126,13 @@ export const changePassword = async (req, res, next) => {
 // forget password
 export const forgetPassword = async (req, res, next) => {
     try {
-        const {email} = req.body
-        if(!email) return res.status({message: 'Email Cannot be Empty'})
+        // const {email} = req.body
+        // if(!email) return res.status({message: 'Email Cannot be Empty'})
         const otp = generateOtp()
-        const otpExpiration = new Date(Date.now() + 5 * 60 * 1000) // 5 menit
+        const otpExpiration = new Date(Date.now() + 3 * 60 * 1000) // 3 menit
         const user = await Users.findOne({
             where: {
-                email: email
+                email: req.email
             }
         })
 
@@ -143,11 +143,11 @@ export const forgetPassword = async (req, res, next) => {
             otpExpiration: otpExpiration
         },{
             where: {
-                email: email
+                email: req.email
             }
         })
 
-        sendOtp(email,otp)
+        sendOtp(req.email,otp)
         return res.status(200).json({message: 'Check OTP Code in Your Email'})
 
     } catch (error) {
@@ -166,27 +166,26 @@ export const newPassword = async(req, res, next) => {
 
         const user = await Users.findOne({
             where: {
-                uuid: req.userUuid
+                id: req.userId
             }
         })
 
         if(!user) return res.status(404).json({message: 'Data Not Found'})
         
+        if(user.otpCode !== otp) return res.status(400).json({message: 'Invalid OTP code'})
+
+        if(new Date() > user.otpExpiration) return res.status(400).json({message: 'The OTP code expires'})
+
         const hashPassword = await argon2.hash(newPassword)
+        await Users.update({
+            password: hashPassword
+        },{
+            where: {
+                id: req.userId
+            }
+        })
 
-        if(user.otpCode === otp && user.otpExpiration && user.otpExpiration > new Date()){
-            await Users.update({
-                password: hashPassword
-            },{
-                where: {
-                    uuid: req.userUuid
-                }
-            })
-
-            return res.status(201).json({message: 'password updated successfully'})
-        }
-
-        return res.status(400).json({message: 'Invalid OTP code or OTP code has expired, please re-request your OTP code'})
+        return res.status(201).json({message: 'password updated successfully'})
 
     } catch (error) {
         next(error)

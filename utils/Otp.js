@@ -27,7 +27,7 @@ export const sendOtp = (email, OTP) => {
         to: email,
         subject: 'Your OTP Code',
         text: `Your OTP Code is: ${OTP}
-OTP Code expired in 5 minutes`
+OTP Code expired in 3 minutes`
     }
 
     transporter.sendMail(mailOptions, (error, info) => {

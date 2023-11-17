@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Management Pengeluaran
 
 Saya menggunakan NodeJs v20.5.0, dan npm v9.8.0  
@@ -12,6 +13,13 @@ Sebuah API sederhana untuk mencatat pengeluaran anda dan jumlah pengeluaran anda
 5. Import models dan uncomment code ini: `ModelsName.sync()` => Ganti `ModelsName` dengan nama model yang sesuai. Untuk table `sessions`, cukup ubah menjadi `store.sync()`.
 6. Jalankan server: `npm start`.
 7. Untuk bisa mengakses, Anda harus melakukan registrasi terlebih dahulu.
+=======
+# API Management Pengeluaran
+
+
+
+
+>>>>>>> 775967b (change authentication from session to jwt)
 
 
 

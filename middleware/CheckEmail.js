@@ -7,6 +7,6 @@ export const checkEmail = async (req, res, next) => {
             email: req.body.email
         }
     })
-    if(user && user.emailVerified === false) return res.status(403).json({message: 'Your email has not been verified, please verify your email'})
+    if(user && user.emailVerified !== true) return res.status(400).json({message: 'Your email has not been verified, please verify your email'})
     next()
 }

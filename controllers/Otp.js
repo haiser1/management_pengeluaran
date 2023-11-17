@@ -1,7 +1,7 @@
 import Users from "../models/UserModels.js"
 import { generateOtp, sendOtp } from "../utils/Otp.js"
 
-export const verifyOTP = async (req, res, next) => {
+export const verifyEmail = async (req, res, next) => {
     try {
       const { email, otp } = req.body
 
@@ -12,26 +12,24 @@ export const verifyOTP = async (req, res, next) => {
           email: email
         }
       })
-  
+
       if (!user) return res.status(404).json({ message: 'Email Not Found' })
-  
-      if (user.otpCode === otp && user.otpExpiration && user.otpExpiration > new Date()) {
-        await Users.update(
-          {
-            emailVerified: true
-          },
-          {
-            where: {
-              email: email
-            },
-            returning: true
-          }
-        )
 
-        return res.status(200).json({ message: 'Email Verified Successfully' })
-      }
+      if(user.emailVerified !== false) return res.status(200).json({message: 'your email has been verified'})
 
-      return res.status(400).json({ message: 'Invalid OTP code or OTP code has expired, please re-request your OTP'})
+      if(user.otpCode !== otp) return res.status(400).json({message: 'Invalid Otp Code'})
+
+      if(new Date() > user.otpExpiration) return res.status({message: 'The OTP code expires'})
+
+      await Users.update({
+        emailVerified: true
+      }, {
+        where: {
+          email: email
+        }
+      })
+
+      return res.status(200).json({message: 'Email verified successfuly'})
 
     } catch (error) {
       next(error)
@@ -46,16 +44,16 @@ export const resetOtp = async (req, res, next) => {
         if(!email) return res.status(400).json({message: 'Email Cannot be Empty'})
 
         const otp = generateOtp()
-        const otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
-        const user = Users.findOne({
+        const otpExpiration = new Date(Date.now() + 3 * 60 * 1000) // 3 menit
+        const user = await Users.findOne({
             where: {
                 email: email
             }
         })
 
-        if(!user) return res.status(404).json({message: 'User Not Found'})
+        if(!user) return res.status(404).json({message: 'Email Not Found'})
 
-        if(user.emailVerified === true) return res.status(200).json({message: 'your email has been verified'})
+        if(user.emailVerified !== false) return res.status(200).json({message: 'your email has been verified'})
 
         Users.update({
             otpCode: otp,

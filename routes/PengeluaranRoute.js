@@ -1,21 +1,19 @@
 import express from 'express'
-import { checkSession } from '../middleware/CheckSession.js'
+import { checkToken } from '../middleware/CheckToken.js'
 import { addPengeluaran,
         deletePengeluaran,
         getPengeluaran,
-        getPengeluaranDayAgo,
-        getSumPengeluaranDayAgo,
+        getPengeluaranById,
         updatePengeluaran, 
 } from '../controllers/Pengeluaran.js'
 
 const router = express.Router()
 
-router.post('/users/pengeluaran', checkSession, addPengeluaran)
-router.get('/users/pengeluaran', checkSession, getPengeluaran)
-router.get('/users/pengeluaran/:day', checkSession, getPengeluaranDayAgo)
-router.get('/users/total-pengeluaran/:day', checkSession, getSumPengeluaranDayAgo)
-router.patch('/users/pengeluaran/:id', checkSession, updatePengeluaran)
-router.delete('/users/pengeluaran/:id', checkSession, deletePengeluaran)
+router.post('/users/pengeluaran', checkToken, addPengeluaran)
+router.get('/users/pengeluaran', checkToken, getPengeluaran)
+router.get('/users/pengeluaran/:id', checkToken, getPengeluaranById)
+router.patch('/users/pengeluaran/:id', checkToken, updatePengeluaran)
+router.delete('/users/pengeluaran/:id', checkToken, deletePengeluaran)
 
 
 export default router
