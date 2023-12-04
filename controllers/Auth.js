@@ -1,11 +1,11 @@
 import Users from "../models/UserModels.js"
 import argon2 from "argon2"
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
+import fs from 'fs/promises'
 
 
-const accessTokenPath = fs.readFileSync(process.env.PATH_PRIVATE_KEY, 'utf-8')
-const refreshTokenPath = fs.readFileSync(process.env.PATH_PUBLIC_KEY, 'utf-8')
+const accessTokenPath = await fs.readFile(process.env.PATH_PRIVATE_KEY, 'utf-8')
+const refreshTokenPath = await fs.readFile(process.env.PATH_PUBLIC_KEY, 'utf-8')
 
 export const login = async (req, res, next) => {
   try {

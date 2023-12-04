@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
+import fs from 'fs/promises'
 import { configDotenv } from 'dotenv'
 configDotenv()
 
-const refreshTokenPath = fs.readFileSync(process.env.PATH_PUBLIC_KEY, 'utf-8')
+const refreshTokenPath = await fs.readFile(process.env.PATH_PUBLIC_KEY, 'utf-8')
 export const checkToken = async (req, res, next) => {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
